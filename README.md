@@ -1,1 +1,1 @@
-# CUDA Particles
+# CUDA k-means
