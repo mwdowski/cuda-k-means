@@ -3,6 +3,8 @@
 #include "../csv_reader/csv_reader.hpp"
 #include "../csv_reader/csv_columnwise_data.hpp"
 #include "../macros/macros.hpp"
+#include "../data_visualizer/data_visualizer_2d.hpp"
+#include <vector>
 
 template <int DIMENSIONS_COUNT>
 void application::run_for_one_dimensions_count(options &options)
@@ -16,6 +18,22 @@ void application::run_for_one_dimensions_count(options &options)
     kmeans<DIMENSIONS_COUNT> kmeans((int)data.size(), options.cluster_count);
 
     kmeans.load_points_data(data.data);
+    std::vector<int> tmp;
+    if (options.visualize)
+    {
+        if (DIMENSIONS_COUNT == 2)
+        {
+            data_visualizer_2d visualizer(data.data[0], data.data[1], tmp);
+            visualizer.show_plot();
+        }
+        else if (DIMENSIONS_COUNT == 3)
+        {
+            /*
+            data_visualizer_3d visualizer(data.data[0], data.data[1], data.data[2], vector<float>());
+            visualizer.show_plot();
+            */
+        }
+    }
 }
 
 void application::run(options &options)
