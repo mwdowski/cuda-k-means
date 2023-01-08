@@ -15,9 +15,11 @@ void application::run_for_one_dimensions_count(options &options)
         fprintf_error_and_exit("Invalid data.\n");
     }
 
-    kmeans<DIMENSIONS_COUNT> kmeans((int)data.size(), options.cluster_count);
+    kmeans<DIMENSIONS_COUNT> kmeans(data.size(), options.cluster_count);
 
-    kmeans.load_points_data(data.data);
+    kmeans.load_points_data(data);
+    cuda_try_or_exit(kmeans.compute());
+
     std::vector<int> tmp;
     if (options.visualize)
     {
@@ -38,7 +40,6 @@ void application::run_for_one_dimensions_count(options &options)
 
 void application::run(options &options)
 {
-
     switch (options.dimension_count)
     {
     case 2:

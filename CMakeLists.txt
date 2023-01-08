@@ -5,8 +5,8 @@ project(cuda-k-means
         LANGUAGES CXX CUDA)
 
 find_package(OpenGL REQUIRED)
-#find_package(Thrust REQUIRED)
-#thrust_create_target(Thrust)
+find_package(Thrust REQUIRED)
+thrust_create_target(Thrust)
 find_package(glfw3 REQUIRED)
 
 set(CMAKE_BUILD_TYPE Debug)
@@ -19,6 +19,10 @@ set(DEFAULT_CUDA_ARCHITECTURE "72")
 # macros
 add_library(macros macros/macros.hpp)
 set_target_properties(macros PROPERTIES LINKER_LANGUAGE CXX)
+
+# call_function
+add_library(call_function helpers/call_function.hpp)
+set_target_properties(call_function PROPERTIES LINKER_LANGUAGE CXX)
 
 # macros_cuda
 add_library(macros_cuda macros/macros_cuda.cuh)
@@ -56,8 +60,8 @@ set_target_properties(kernels PROPERTIES CUDA_ARCHITECTURES ${DEFAULT_CUDA_ARCHI
 
 # kmeans
 add_library(kmeans kmeans/kmeans.cuh)
-target_include_directories(kmeans PUBLIC ${CUDA_INCLUDE_DIRS} macros_cuda kernels)
-target_link_libraries(kmeans ${CUDA_RUNTIME_LIBRARY})
+target_include_directories(kmeans PUBLIC ${CUDA_INCLUDE_DIRS} macros_cuda kernels call_function)
+target_link_libraries(kmeans ${CUDA_RUNTIME_LIBRARY} Thrust)
 set_target_properties(kmeans PROPERTIES LINKER_LANGUAGE CUDA)
 set_target_properties(kmeans PROPERTIES CUDA_ARCHITECTURES ${DEFAULT_CUDA_ARCHITECTURE})
 

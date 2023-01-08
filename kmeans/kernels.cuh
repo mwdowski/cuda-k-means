@@ -9,9 +9,11 @@ namespace kernels
 {
     const int THREADS_PER_BLOCK = 128;
     __device__ const int CUDA_CONSTANT_MEMORY_SIZE = 65536;
-    __device__ const int CENTROIDS_ARRAY_SIZE = CUDA_CONSTANT_MEMORY_SIZE / sizeof(int);
+    __device__ const int POINTS_ARRAY_SIZE = 10;
+    __device__ const int CENTROIDS_ARRAY_SIZE = (CUDA_CONSTANT_MEMORY_SIZE - POINTS_ARRAY_SIZE * sizeof(float *)) / sizeof(int);
 
     __constant__ __device__ float centroids[CENTROIDS_ARRAY_SIZE];
+    __constant__ __device__ float *dev_points[POINTS_ARRAY_SIZE];
 
     template <int DIMENSIONS_COUNT>
     __device__ float distance_squared(float x[DIMENSIONS_COUNT], float y[DIMENSIONS_COUNT])
@@ -27,26 +29,27 @@ namespace kernels
     }
 
     template <int DIMENSIONS_COUNT>
-    __global__ void assign_nearest_cluster_kernel(float *points_data[DIMENSIONS_COUNT], int clusters_count, int rows_count, int *cluster_assignments, int *changed_assignments)
+    __global__ void assign_nearest_cluster_kernel(int clusters_count, int rows_count, int *cluster_assignments, int *changed_assignments)
     {
         float point[DIMENSIONS_COUNT];
         int index = threadIdx.x + blockIdx.x * blockDim.x;
 
         if (index < rows_count)
         {
-            // get point data
+// get point data
+#pragma unroll
             for (int i = 0; i < DIMENSIONS_COUNT; i++)
             {
-                point[i] = points_data[DIMENSIONS_COUNT][index];
+                point[i] = dev_points[i][index];
             }
 
             // find closest cluster center
-            float min_distance_squared = distance_squared(centroids, point);
+            float min_distance_squared = distance_squared<DIMENSIONS_COUNT>(centroids, point);
             int min_cluster = 0;
 
             for (int k = 1; k < clusters_count; k++)
             {
-                float current_distance_squared = distance_squared(centroids + k * DIMENSIONS_COUNT, point);
+                float current_distance_squared = distance_squared<DIMENSIONS_COUNT>(centroids + k * DIMENSIONS_COUNT, point);
                 if (current_distance_squared < min_distance_squared)
                 {
                     min_distance_squared = current_distance_squared;
