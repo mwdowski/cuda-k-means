@@ -2,15 +2,16 @@
 
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include "../macros/macros.cuh"
+#include "../macros/macros_cuda.cuh"
 #include "kernels.cuh"
+#include <vector>
 
 template <int DIMENSION_COUNT>
 class kmeans
 {
     float *dev_points_data[DIMENSION_COUNT]{nullptr};
     int *dev_cluster_assignments = nullptr;
-    int *dev_changed_assignment = nullptr;
+    int *dev_changed_assignments = nullptr;
     const int rows_count;
     const int clusters_count;
 
@@ -23,6 +24,7 @@ private:
         }
 
         cuda_try_or_return(cudaMalloc(&dev_cluster_assignments, rows_count * sizeof(int)));
+        cuda_try_or_return(cudaMalloc(&dev_changed_assignments, rows_count * sizeof(int)));
 
         return cudaDeviceSynchronize();
     }
@@ -37,6 +39,9 @@ private:
 
         cuda_try_or_return(cudaFree(dev_cluster_assignments));
         dev_cluster_assignments = nullptr;
+
+        cuda_try_or_return(cudaFree(dev_changed_assignments));
+        dev_changed_assignments = nullptr;
 
         return cudaDeviceSynchronize();
     }
@@ -77,11 +82,11 @@ public:
         cuda_try_or_exit(free_device_data());
     }
 
-    cudaError_t load_points_data(float *host_points_data[DIMENSION_COUNT])
+    cudaError_t load_points_data(std::vector<float> host_points_data[DIMENSION_COUNT])
     {
         for (int i = 0; i < DIMENSION_COUNT; i++)
         {
-            cuda_try_or_return(cudaMemcpy(dev_points_data[i], host_points_data[i], rows_count, cudaMemcpyHostToDevice));
+            cuda_try_or_return(cudaMemcpy(dev_points_data[i], host_points_data[i].data(), rows_count, cudaMemcpyHostToDevice));
             dev_points_data[i] = nullptr;
         }
 

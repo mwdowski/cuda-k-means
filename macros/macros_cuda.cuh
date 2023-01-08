@@ -19,13 +19,7 @@
         return result;              \
     }
 
-#define fprintf_error_and_exit(error_string) \
-    fprintf(error_string);                   \
-    exit(EXIT_FAILURE);
-
 #define fprintf_cuda_error(error_code) fprintf(              \
     stderr,                                                  \
     "%s: line %d - CUDA action failed! Error %d (%s): %s\n", \
     __FILE__, __LINE__, error_code, cudaGetErrorName(error_code), cudaGetErrorString(error_code));
-
-#define GET_VARIABLE_NAME(Variable) (#Variable)

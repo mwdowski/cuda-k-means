@@ -14,7 +14,7 @@ options options::from_commandline_arguments(const int argc, char **argv)
     int current_option = 0;
     while (current_option != GETOPT_FINISHED)
     {
-        switch (current_option = getopt(argc, argv, ":i:o:a:k:hv"))
+        switch (current_option = getopt(argc, argv, ":i:o:a:k:n:hv"))
         {
         case GETOPT_FINISHED:
             break;
@@ -40,6 +40,22 @@ options options::from_commandline_arguments(const int argc, char **argv)
             catch (...)
             {
                 fprintf(stderr, "Invalid cluster count \"%s\". Use option \"h\" for help.\n", optarg);
+                exit(EXIT_FAILURE);
+            }
+            break;
+        case 'n':
+            try
+            {
+                result.dimension_count = std::stoi(std::string(optarg));
+
+                if (result.dimension_count < MIN_DIMENSIONS_COUNT || result.dimension_count > MAX_DIMENSIONS_COUNT)
+                {
+                    throw nullptr;
+                }
+            }
+            catch (...)
+            {
+                fprintf(stderr, "Invalid dimensions count \"%s\". Use option \"h\" for help.\n", optarg);
                 exit(EXIT_FAILURE);
             }
             break;
