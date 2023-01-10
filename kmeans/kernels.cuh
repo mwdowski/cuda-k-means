@@ -7,7 +7,7 @@
 
 namespace kernels
 {
-    const int THREADS_PER_BLOCK = 128;
+    const int THREADS_PER_BLOCK = 256;
     __device__ const int CUDA_CONSTANT_MEMORY_SIZE = 65536;
     __device__ const int POINTS_ARRAY_SIZE = 10;
     __device__ const int CENTROIDS_ARRAY_SIZE = (CUDA_CONSTANT_MEMORY_SIZE - POINTS_ARRAY_SIZE * sizeof(float *)) / sizeof(int);
@@ -22,7 +22,7 @@ namespace kernels
 
         for (int i = 0; i < DIMENSIONS_COUNT; i++)
         {
-            result += x[i] * x[i] + y[i] * y[i];
+            result += (x[i] - y[i]) * (x[i] - y[i]);
         }
 
         return result;

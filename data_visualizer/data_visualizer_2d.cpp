@@ -24,8 +24,7 @@ void data_visualizer_2d::display(GLFWwindow *window)
     glBegin(GL_POINTS);
     for (size_t i = 0; i < x.size(); i++)
     {
-        // TODO: take color from array
-        glColor4ubv((GLubyte *)&COLORS[0]);
+        glColor4ubv((GLubyte *)&COLORS[color[i]]);
         glVertex2f(x[i], y[i]);
     }
     glEnd();

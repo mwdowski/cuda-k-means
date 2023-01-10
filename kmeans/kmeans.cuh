@@ -10,9 +10,12 @@
 #include <array>
 
 #include <thrust/iterator/zip_iterator.h>
+#include <thrust/iterator/constant_iterator.h>
 #include <thrust/device_vector.h>
+#include <thrust/host_vector.h>
 #include <thrust/reduce.h>
 #include <thrust/sort.h>
+#include <thrust/functional.h>
 
 template <int DIMENSION_COUNT>
 class kmeans
@@ -24,7 +27,8 @@ class kmeans
     const int clusters_count;
 
 private:
-    cudaError_t allocate_device_data()
+    cudaError_t
+    allocate_device_data()
     {
         size_t offset = 0U;
         for (int i = 0; i < DIMENSION_COUNT; i++)
@@ -62,20 +66,22 @@ private:
         return cudaDeviceSynchronize();
     }
 
-    cudaError_t set_first_points_as_centroids()
+    cudaError_t set_first_points_as_centroids(const csv_columnwise_data<DIMENSION_COUNT> &data)
     {
-        size_t current_offset = 0U;
-
-        for (int i = 0; i < DIMENSION_COUNT; i++)
+        std::vector<float> pos(DIMENSION_COUNT * clusters_count);
+        for (int i = 0; i < clusters_count; i++)
         {
-            cuda_try_or_return(cudaMemcpyToSymbol(
-                kernels::centroids,
-                dev_points_data[i],
-                sizeof(float),
-                current_offset,
-                cudaMemcpyDeviceToDevice));
-            current_offset += clusters_count * sizeof(float);
+            for (int j = 0; j < DIMENSION_COUNT; j++)
+            {
+                pos[j + clusters_count * i] = data.data[j][i];
+            }
         }
+        cuda_try_or_return(cudaMemcpyToSymbol(
+            kernels::centroids,
+            pos.data(),
+            sizeof(float) * DIMENSION_COUNT * clusters_count,
+            0U,
+            cudaMemcpyHostToDevice));
 
         return cudaDeviceSynchronize();
     }
@@ -99,11 +105,58 @@ private:
         // auto as_std_array = std::array<thrust::device_ptr<float>, DIMENSION_COUNT>();
 
         // TODO: make_zip_iterator with arguments from array
-        auto zipped_data = helpers::call_function(thrust::make_zip_iterator, data);
-
+        // auto zipped_data = helpers::call_function(thrust::make_zip_iterator, data);
         thrust::device_ptr<int> clusters(dev_cluster_assignments);
+        auto zipped_data = thrust::make_zip_iterator(data[0], data[1]);
 
         thrust::sort_by_key(clusters, clusters + rows_count, zipped_data);
+
+        thrust::device_vector<int> new_keys(clusters_count);
+        thrust::device_vector<float> sums[DIMENSION_COUNT];
+        thrust::device_vector<int> counts[DIMENSION_COUNT];
+        std::vector<float> averages(DIMENSION_COUNT * clusters_count);
+
+        for (int i = 0; i < DIMENSION_COUNT; i++)
+        {
+            sums[i] = thrust::device_vector<float>(clusters_count);
+            counts[i] = thrust::device_vector<int>(clusters_count);
+        }
+
+        for (int i = 0; i < DIMENSION_COUNT; i++)
+        {
+            thrust::reduce_by_key(
+                clusters,
+                clusters + rows_count,
+                data[i],
+                new_keys.begin(),
+                sums[i].begin(),
+                thrust::equal_to<int>(),
+                thrust::plus<float>());
+
+            thrust::reduce_by_key(
+                clusters,
+                clusters + rows_count,
+                thrust::make_constant_iterator<int>(1),
+                new_keys.begin(),
+                counts[i].begin(),
+                thrust::equal_to<int>(),
+                thrust::plus<int>());
+        }
+
+        for (int i = 0; i < clusters_count; i++)
+        {
+            for (int j = 0; j < DIMENSION_COUNT; j++)
+            {
+                averages[i * DIMENSION_COUNT + j] = sums[j][i] / counts[j][i];
+            }
+        }
+
+        cuda_try_or_return(cudaMemcpyToSymbol(
+            kernels::centroids,
+            averages.data(),
+            sizeof(float) * DIMENSION_COUNT * clusters_count,
+            0U,
+            cudaMemcpyHostToDevice));
 
         return cudaDeviceSynchronize();
     }
@@ -126,21 +179,28 @@ public:
             cuda_try_or_return(cudaMemcpy(dev_points_data[i], data.data[i].data(), rows_count * sizeof(float), cudaMemcpyHostToDevice));
         }
 
+        cuda_try_or_return(set_first_points_as_centroids(data));
+
         return cudaDeviceSynchronize();
     }
 
     cudaError_t compute()
     {
-        cuda_try_or_return(set_first_points_as_centroids());
+        // TODO: do until no changes in assignments
+        for (int i = 0; i < 10; i++)
+        {
+            cuda_try_or_return(assign_nearest_clusters());
+            cuda_try_or_return(recalculate_centroids());
+        }
+
         cuda_try_or_return(assign_nearest_clusters());
-        cuda_try_or_return(recalculate_centroids());
 
         return cudaDeviceSynchronize();
     }
 
     cudaError_t get_points_assignments(int *host_cluster_assignments)
     {
-        cuda_try_or_return(cudaMemcpy(host_cluster_assignments, dev_cluster_assignments, rows_count * sizeof(float), cudaMemcpyDeviceToHost));
+        cuda_try_or_return(cudaMemcpy(host_cluster_assignments, dev_cluster_assignments, rows_count * sizeof(int), cudaMemcpyDeviceToHost));
 
         return cudaDeviceSynchronize();
     }

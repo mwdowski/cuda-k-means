@@ -20,12 +20,16 @@ void application::run_for_one_dimensions_count(options &options)
     kmeans.load_points_data(data);
     cuda_try_or_exit(kmeans.compute());
 
-    std::vector<int> tmp;
+    int *colors_p = new int[data.size()];
+    cuda_try_or_exit(kmeans.get_points_assignments(colors_p));
+
+    std::vector<int> colors(colors_p, colors_p + data.size());
+
     if (options.visualize)
     {
         if (DIMENSIONS_COUNT == 2)
         {
-            data_visualizer_2d visualizer(data.data[0], data.data[1], tmp);
+            data_visualizer_2d visualizer(data.data[0], data.data[1], colors);
             visualizer.show_plot();
         }
         else if (DIMENSIONS_COUNT == 3)
@@ -36,6 +40,9 @@ void application::run_for_one_dimensions_count(options &options)
             */
         }
     }
+
+    // delete[] colors_p;
+    colors_p = nullptr;
 }
 
 void application::run(options &options)
@@ -45,6 +52,7 @@ void application::run(options &options)
     case 2:
         run_for_one_dimensions_count<2>(options);
         break;
+        /*
     case 3:
         run_for_one_dimensions_count<3>(options);
         break;
@@ -60,6 +68,7 @@ void application::run(options &options)
     case 7:
         run_for_one_dimensions_count<7>(options);
         break;
+        */
     default:
         break;
     }
