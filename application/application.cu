@@ -5,6 +5,15 @@
 #include "../macros/macros.hpp"
 #include "../data_visualizer/data_visualizer_2d.hpp"
 #include <vector>
+#include <boost/preprocessor.hpp>
+#include "../macros/macros.hpp"
+
+#ifndef DIMENSION_TOP_LIMIT
+#define DIMENSION_TOP_LIMIT 10
+#endif
+#ifndef DIMENSION_BOTTOM_LIMIT
+#define DIMENSION_BOTTOM_LIMIT 2
+#endif
 
 template <int DIMENSIONS_COUNT>
 void application::run_for_one_dimensions_count(options &options)
@@ -17,59 +26,49 @@ void application::run_for_one_dimensions_count(options &options)
 
     kmeans<DIMENSIONS_COUNT> kmeans(data.size(), options.cluster_count);
 
-    kmeans.load_points_data(data);
+    cuda_try_or_exit(kmeans.load_points_data(data));
     cuda_try_or_exit(kmeans.compute());
 
     int *colors_p = new int[data.size()];
-    cuda_try_or_exit(kmeans.get_points_assignments(colors_p));
+    float *centroids_p = new float[options.cluster_count * DIMENSIONS_COUNT];
+    cuda_try_or_exit(kmeans.get_points_assignments(colors_p, centroids_p));
 
-    std::vector<int> colors(colors_p, colors_p + data.size());
+    std::vector<int> colors;
+    std::vector<float> clusters;
+    colors.assign(colors_p, colors_p + data.size());
+    colors_p = nullptr;
+
+    clusters.assign(centroids_p, centroids_p + options.cluster_count * DIMENSIONS_COUNT);
+    centroids_p = nullptr;
 
     if (options.visualize)
     {
         if (DIMENSIONS_COUNT == 2)
         {
-            data_visualizer_2d visualizer(data.data[0], data.data[1], colors);
+            data_visualizer_2d visualizer(data.data[0], data.data[1], colors, clusters);
             visualizer.show_plot();
         }
+        /*
         else if (DIMENSIONS_COUNT == 3)
         {
-            /*
             data_visualizer_3d visualizer(data.data[0], data.data[1], data.data[2], vector<float>());
             visualizer.show_plot();
-            */
         }
+        */
     }
-
-    // delete[] colors_p;
-    colors_p = nullptr;
 }
 
 void application::run(options &options)
 {
+#define CODE_DIMENSION_SWITCH_PASTE(rep, n, _)    \
+    case n:                                       \
+        run_for_one_dimensions_count<n>(options); \
+        break;
+
     switch (options.dimension_count)
     {
-    case 2:
-        run_for_one_dimensions_count<2>(options);
-        break;
-        /*
-    case 3:
-        run_for_one_dimensions_count<3>(options);
-        break;
-    case 4:
-        run_for_one_dimensions_count<4>(options);
-        break;
-    case 5:
-        run_for_one_dimensions_count<5>(options);
-        break;
-    case 6:
-        run_for_one_dimensions_count<6>(options);
-        break;
-    case 7:
-        run_for_one_dimensions_count<7>(options);
-        break;
-        */
+        BOOST_PP_REPEAT_FROM_TO(DIMENSION_BOTTOM_LIMIT, DIMENSION_TOP_LIMIT, CODE_DIMENSION_SWITCH_PASTE, _)
     default:
-        break;
+        fprintf_error_and_exit("Not supported number of dimensions.\n")
     }
 }

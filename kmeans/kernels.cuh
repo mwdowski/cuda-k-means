@@ -16,10 +16,10 @@ namespace kernels
     __constant__ __device__ float *dev_points[POINTS_ARRAY_SIZE];
 
     template <int DIMENSIONS_COUNT>
-    __device__ float distance_squared(float x[DIMENSIONS_COUNT], float y[DIMENSIONS_COUNT])
+    __device__ float distance_squared(float *x, float *y)
     {
         float result = 0.0f;
-
+#pragma unroll
         for (int i = 0; i < DIMENSIONS_COUNT; i++)
         {
             result += (x[i] - y[i]) * (x[i] - y[i]);
@@ -49,7 +49,7 @@ namespace kernels
 
             for (int k = 1; k < clusters_count; k++)
             {
-                float current_distance_squared = distance_squared<DIMENSIONS_COUNT>(centroids + k * DIMENSIONS_COUNT, point);
+                float current_distance_squared = distance_squared<DIMENSIONS_COUNT>(&centroids[k * DIMENSIONS_COUNT], point);
                 if (current_distance_squared < min_distance_squared)
                 {
                     min_distance_squared = current_distance_squared;

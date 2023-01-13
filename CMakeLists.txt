@@ -8,6 +8,7 @@ find_package(OpenGL REQUIRED)
 find_package(Thrust REQUIRED)
 thrust_create_target(Thrust)
 find_package(glfw3 REQUIRED)
+find_package(Boost COMPONENTS preprocessor)
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS "-Wall")
@@ -67,7 +68,7 @@ set_target_properties(kmeans PROPERTIES CUDA_ARCHITECTURES ${DEFAULT_CUDA_ARCHIT
 
 # application
 add_library(application application/application.cuh application/application.cu)
-target_include_directories(application PUBLIC ${CUDA_INCLUDE_DIRS} kmeans csv_reader)
+target_include_directories(application PUBLIC ${CUDA_INCLUDE_DIRS} kmeans csv_reader macros)
 set_target_properties(application PROPERTIES LINKER_LANGUAGE CUDA)
 set_target_properties(application PROPERTIES CUDA_ARCHITECTURES ${DEFAULT_CUDA_ARCHITECTURE})
 target_link_libraries(application ${CUDA_RUNTIME_LIBRARY} data_visualizer_2d)

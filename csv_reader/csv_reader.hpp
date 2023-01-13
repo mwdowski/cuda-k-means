@@ -25,7 +25,7 @@ public:
         {
             fprintf_error_and_exit("Could not open input file.\n");
         }
-
+        int ddd = 0;
         while (getline(file, line))
         {
             int current_index = 0;
@@ -46,7 +46,12 @@ public:
             current_string = line.substr(start, end - start);
             current_float = std::stof(current_string);
             result.data[current_index].push_back(current_float);
+            ddd++;
+            if (ddd > 10000000)
+                break;
         }
+
+        file.close();
 
         return result;
     }

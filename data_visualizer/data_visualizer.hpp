@@ -10,6 +10,6 @@ protected:
         0xFF4D4DFFU,
         0xFF4DFF4DU,
         0xFFFF4D4DU,
-        0xFF005AFFU,
+        0xFF49CAFCU,
     };
 };
