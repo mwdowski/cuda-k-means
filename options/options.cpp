@@ -5,7 +5,7 @@
 
 bool options::is_valid()
 {
-    return this->input_file_name.length() > 0 && this->output_file_name.length() > 0 && this->cluster_count != CLUSTER_COUNT_NOT_DECLARED;
+    return this->input_file_name.length() > 0 && this->cluster_count != CLUSTER_COUNT_NOT_DECLARED;
 }
 
 options options::from_commandline_arguments(const int argc, char **argv)
@@ -14,7 +14,7 @@ options options::from_commandline_arguments(const int argc, char **argv)
     int current_option = 0;
     while (current_option != GETOPT_FINISHED)
     {
-        switch (current_option = getopt(argc, argv, ":i:o:a:k:n:hv"))
+        switch (current_option = getopt(argc, argv, ":i:o:a:k:n:l:hv"))
         {
         case GETOPT_FINISHED:
             break;
@@ -40,6 +40,22 @@ options options::from_commandline_arguments(const int argc, char **argv)
             catch (...)
             {
                 fprintf(stderr, "Invalid cluster count \"%s\". Use option \"h\" for help.\n", optarg);
+                exit(EXIT_FAILURE);
+            }
+            break;
+        case 'l':
+            try
+            {
+                result.iteration_limit = std::stoi(std::string(optarg));
+
+                if (result.iteration_limit < 0)
+                {
+                    throw nullptr;
+                }
+            }
+            catch (...)
+            {
+                fprintf(stderr, "Invalid iteration limit \"%s\". Use option \"h\" for help.\n", optarg);
                 exit(EXIT_FAILURE);
             }
             break;
@@ -79,7 +95,7 @@ options options::from_commandline_arguments(const int argc, char **argv)
 
     if (!result.is_valid())
     {
-        fprintf(stderr, "Specify correct input and output files and specify cluster number. Use option \"h\" for help.\n");
+        fprintf(stderr, "Specify correct input file and specify cluster number. Use option \"h\" for help.\n");
         exit(EXIT_FAILURE);
     }
 

@@ -9,7 +9,7 @@
 #include "../macros/macros.hpp"
 
 #ifndef DIMENSION_TOP_LIMIT
-#define DIMENSION_TOP_LIMIT 10
+#define DIMENSION_TOP_LIMIT 9
 #endif
 #ifndef DIMENSION_BOTTOM_LIMIT
 #define DIMENSION_BOTTOM_LIMIT 2
@@ -27,7 +27,7 @@ void application::run_for_one_dimensions_count(options &options)
     kmeans<DIMENSIONS_COUNT> kmeans(data.size(), options.cluster_count);
 
     cuda_try_or_exit(kmeans.load_points_data(data));
-    cuda_try_or_exit(kmeans.compute());
+    cuda_try_or_exit(kmeans.compute(options.iteration_limit));
 
     int *colors_p = new int[data.size()];
     float *centroids_p = new float[options.cluster_count * DIMENSIONS_COUNT];
@@ -45,7 +45,7 @@ void application::run_for_one_dimensions_count(options &options)
     {
         if (DIMENSIONS_COUNT == 2)
         {
-            data_visualizer_2d visualizer(data.data[0], data.data[1], colors, clusters);
+            data_visualizer_2d visualizer(data.data[0], data.data[1], colors, clusters, options.cluster_count);
             visualizer.show_plot();
         }
         /*
@@ -55,6 +55,11 @@ void application::run_for_one_dimensions_count(options &options)
             visualizer.show_plot();
         }
         */
+    }
+
+    if (options.output_file_name.length() > 0)
+    {
+        csv_reader<1>::to_file(options.output_file_name.c_str(), colors);
     }
 }
 

@@ -11,7 +11,7 @@ find_package(glfw3 REQUIRED)
 find_package(Boost COMPONENTS preprocessor)
 
 set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS "-Wall -fsanitize=undefined -Werror")
 set(CMAKE_CUDA_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 #set(CMAKE_CUDA_FLAGS_DEBUG "-g -G")
@@ -20,10 +20,6 @@ set(DEFAULT_CUDA_ARCHITECTURE "72")
 # macros
 add_library(macros macros/macros.hpp)
 set_target_properties(macros PROPERTIES LINKER_LANGUAGE CXX)
-
-# call_function
-add_library(call_function helpers/call_function.hpp)
-set_target_properties(call_function PROPERTIES LINKER_LANGUAGE CXX)
 
 # macros_cuda
 add_library(macros_cuda macros/macros_cuda.cuh)
@@ -61,7 +57,7 @@ set_target_properties(kernels PROPERTIES CUDA_ARCHITECTURES ${DEFAULT_CUDA_ARCHI
 
 # kmeans
 add_library(kmeans kmeans/kmeans.cuh)
-target_include_directories(kmeans PUBLIC ${CUDA_INCLUDE_DIRS} macros_cuda kernels call_function)
+target_include_directories(kmeans PUBLIC ${CUDA_INCLUDE_DIRS} macros_cuda kernels)
 target_link_libraries(kmeans ${CUDA_RUNTIME_LIBRARY} Thrust)
 set_target_properties(kmeans PROPERTIES LINKER_LANGUAGE CUDA)
 set_target_properties(kmeans PROPERTIES CUDA_ARCHITECTURES ${DEFAULT_CUDA_ARCHITECTURE})

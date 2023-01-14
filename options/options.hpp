@@ -13,6 +13,7 @@ struct options
 
     int cluster_count = CLUSTER_COUNT_NOT_DECLARED;
     int dimension_count = 2;
+    int iteration_limit = 20;
     bool visualize = false;
     kmeans_centroid_algorithm centroid_algorithm = not_set;
     std::string input_file_name = FILE_NAME_NOT_DECLARED;
@@ -23,16 +24,17 @@ private:
     inline static const int GETOPT_FINISHED = -1;
     inline static const int MIN_CLUSTER_COUNT = 2;
     inline static const int MIN_DIMENSIONS_COUNT = 2;
-    inline static const int MAX_DIMENSIONS_COUNT = 7;
+    inline static const int MAX_DIMENSIONS_COUNT = 9;
     inline static const std::string FILE_NAME_NOT_DECLARED = "";
     inline static const std::string HELP_MESSAGE =
         "Required arguments:\n"
         " -i [file path]: Input file path.\n"
-        " -o [file path]: Output file path.\n"
         " -k [integer]: Desired cluster count. Must be an integer equal or higher than 2.\n"
-        " -n [integer]: Data dimension (column) count. Must be an integer in range <2, 10>.\n"
+        " -n [integer]: Data dimension (column) count. Must be an integer in range <2, 9>.\n"
         "Optional arguments:\n"
         " -v: Visualize results. Works only for 2 and 3-dimensional data.\n"
+        " -o [file path]: Output file path.\n"
+        " -l [integer]: Desired iteration limit. Must be non-negative. Default value is 20.\n"
         " -h: Display help.\n"
         " -a: Algorithm - TODO.\n";
 
