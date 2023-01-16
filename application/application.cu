@@ -1,5 +1,5 @@
 #include "application.cuh"
-#include "../kmeans/kmeans.cuh"
+#include "../kmeans/gpu_kmeans.cuh"
 #include "../csv_reader/csv_reader.hpp"
 #include "../csv_reader/csv_columnwise_data.hpp"
 #include "../macros/macros.hpp"
@@ -9,7 +9,7 @@
 #include "../macros/macros.hpp"
 
 #ifndef DIMENSION_TOP_LIMIT
-#define DIMENSION_TOP_LIMIT 9
+#define DIMENSION_TOP_LIMIT 3
 #endif
 #ifndef DIMENSION_BOTTOM_LIMIT
 #define DIMENSION_BOTTOM_LIMIT 2
@@ -24,7 +24,9 @@ void application::run_for_one_dimensions_count(options &options)
         fprintf_error_and_exit("Invalid data.\n");
     }
 
-    kmeans<DIMENSIONS_COUNT> kmeans(data.size(), options.cluster_count);
+    gpu_kmedians_with_sort<DIMENSIONS_COUNT> gpu_kmeans(data.size(), options.cluster_count);
+
+    kmeans<DIMENSIONS_COUNT> &kmeans = gpu_kmeans;
 
     cuda_try_or_exit(kmeans.load_points_data(data));
     cuda_try_or_exit(kmeans.compute(options.iteration_limit));

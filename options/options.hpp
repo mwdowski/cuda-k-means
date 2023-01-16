@@ -6,16 +6,19 @@ struct options
 {
     enum kmeans_centroid_algorithm
     {
-        not_set,
-        alg1,
-        alg2
+        gpu_mean,
+        gpu_median_partition,
+        gpu_median_sort,
+        cpu_mean,
+        cpu_median_partition,
+        cpu_median_sort,
     };
 
     int cluster_count = CLUSTER_COUNT_NOT_DECLARED;
     int dimension_count = 2;
     int iteration_limit = 20;
     bool visualize = false;
-    kmeans_centroid_algorithm centroid_algorithm = not_set;
+    kmeans_centroid_algorithm centroid_algorithm = gpu_mean;
     std::string input_file_name = FILE_NAME_NOT_DECLARED;
     std::string output_file_name = FILE_NAME_NOT_DECLARED;
 
