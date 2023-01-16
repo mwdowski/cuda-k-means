@@ -6,12 +6,9 @@ struct options
 {
     enum kmeans_centroid_algorithm
     {
-        gpu_mean,
-        gpu_median_partition,
-        gpu_median_sort,
-        cpu_mean,
-        cpu_median_partition,
-        cpu_median_sort,
+        gpu_mean = 0,
+        gpu_median_partition = 1,
+        gpu_median_sort = 2,
     };
 
     int cluster_count = CLUSTER_COUNT_NOT_DECLARED;
@@ -39,7 +36,10 @@ private:
         " -o [file path]: Output file path.\n"
         " -l [integer]: Desired iteration limit. Must be non-negative. Default value is 20.\n"
         " -h: Display help.\n"
-        " -a: Algorithm - TODO.\n";
+        " -a: Algorithm\n"
+        "    -a 0: k-means on GPU (default);\n"
+        "    -a 1: k-medians with partition on GPU (default);\n"
+        "    -a 2: k-medians with sorting on GPU (default);\n";
 
     options(){};
     bool is_valid();

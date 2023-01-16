@@ -2,6 +2,7 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <stdexcept>
+#include <cstdlib>
 
 bool options::is_valid()
 {
@@ -23,9 +24,6 @@ options options::from_commandline_arguments(const int argc, char **argv)
             break;
         case 'o':
             result.output_file_name = std::string(optarg);
-            break;
-        case 'a':
-            result.centroid_algorithm = (options::kmeans_centroid_algorithm)stoi(std::string(optarg));
             break;
         case 'k':
             try
@@ -81,6 +79,22 @@ options options::from_commandline_arguments(const int argc, char **argv)
             break;
         case 'v':
             result.visualize = true;
+            break;
+        case 'a':
+            try
+            {
+                int value = std::stoi(std::string(optarg));
+                if (value < 0 || value > 2)
+                {
+                    throw nullptr;
+                }
+                result.centroid_algorithm = static_cast<kmeans_centroid_algorithm>(value);
+            }
+            catch (...)
+            {
+                fprintf(stderr, "Invalid algoritm \"%s\". Use option \"h\" for help.\n", optarg);
+                exit(EXIT_FAILURE);
+            }
             break;
         case ':':
             fprintf(stderr, "Missing argument for option \"%c\". Use option \"h\" for help.\n", optopt);

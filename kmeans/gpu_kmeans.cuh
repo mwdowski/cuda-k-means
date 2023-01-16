@@ -204,7 +204,7 @@ public:
         return cudaDeviceSynchronize();
     }
 
-    virtual cudaError_t compute(int iteration_limit) override
+    virtual cudaError_t compute(int iteration_limit, int &interation_count) override
     {
         int counter = 0;
         while (!is_finished() && counter < iteration_limit)
@@ -214,7 +214,7 @@ public:
 
             counter++;
         }
-
+        interation_count = counter;
         cuda_try_or_return(assign_nearest_clusters());
 
         return cudaDeviceSynchronize();

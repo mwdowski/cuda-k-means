@@ -14,6 +14,7 @@ protected:
 public:
     kmeans(int rows_count, int clusters_count) : rows_count{rows_count}, clusters_count{clusters_count} {};
     virtual cudaError_t load_points_data(const csv_columnwise_data<DIMENSION_COUNT> &data) = 0;
-    virtual cudaError_t compute(int iteration_limit) = 0;
+    virtual cudaError_t compute(int iteration_limit, int &interation_count) = 0;
     virtual cudaError_t get_points_assignments(int *host_cluster_assignments, float *centroids) = 0;
+    virtual ~kmeans(){};
 };
