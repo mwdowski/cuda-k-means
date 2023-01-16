@@ -65,6 +65,13 @@ target_include_directories(kmeans PUBLIC ${CUDA_INCLUDE_DIRS} application_timer)
 set_target_properties(kmeans PROPERTIES LINKER_LANGUAGE CUDA)
 set_target_properties(kmeans PROPERTIES CUDA_ARCHITECTURES ${DEFAULT_CUDA_ARCHITECTURE})
 
+# cpu_kmeans
+add_library(cpu_kmeans kmeans/cpu_kmeans.cuh)
+target_include_directories(cpu_kmeans PUBLIC ${CUDA_INCLUDE_DIRS} macros_cuda kmeans)
+target_link_libraries(cpu_kmeans ${CUDA_RUNTIME_LIBRARY} kmeans)
+set_target_properties(cpu_kmeans PROPERTIES LINKER_LANGUAGE CUDA)
+set_target_properties(cpu_kmeans PROPERTIES CUDA_ARCHITECTURES ${DEFAULT_CUDA_ARCHITECTURE})
+
 # gpu_kmeans
 add_library(gpu_kmeans kmeans/gpu_kmeans.cuh)
 target_include_directories(gpu_kmeans PUBLIC ${CUDA_INCLUDE_DIRS} macros_cuda kernels kmeans)
@@ -74,7 +81,7 @@ set_target_properties(gpu_kmeans PROPERTIES CUDA_ARCHITECTURES ${DEFAULT_CUDA_AR
 
 # application
 add_library(application application/application.cuh application/application.cu)
-target_include_directories(application PUBLIC ${CUDA_INCLUDE_DIRS} gpu_kmeans csv_reader macros application_timer)
+target_include_directories(application PUBLIC ${CUDA_INCLUDE_DIRS} gpu_kmeans csv_reader macros application_timer cpu_kmeans)
 set_target_properties(application PROPERTIES LINKER_LANGUAGE CUDA)
 set_target_properties(application PROPERTIES CUDA_ARCHITECTURES ${DEFAULT_CUDA_ARCHITECTURE})
 target_link_libraries(application ${CUDA_RUNTIME_LIBRARY} data_visualizer_2d)

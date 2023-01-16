@@ -9,6 +9,8 @@ struct options
         gpu_mean = 0,
         gpu_median_partition = 1,
         gpu_median_sort = 2,
+        cpu_mean = 3,
+        cpu_median = 4,
     };
 
     int cluster_count = CLUSTER_COUNT_NOT_DECLARED;

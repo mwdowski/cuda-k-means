@@ -84,7 +84,7 @@ options options::from_commandline_arguments(const int argc, char **argv)
             try
             {
                 int value = std::stoi(std::string(optarg));
-                if (value < 0 || value > 2)
+                if (value < 0 || value > 4)
                 {
                     throw nullptr;
                 }

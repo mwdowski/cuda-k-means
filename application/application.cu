@@ -1,5 +1,6 @@
 #include "application.cuh"
 #include "../kmeans/gpu_kmeans.cuh"
+#include "../kmeans/cpu_kmeans.cuh"
 #include "../csv_reader/csv_reader.hpp"
 #include "../csv_reader/csv_columnwise_data.hpp"
 #include "../macros/macros.hpp"
@@ -33,6 +34,12 @@ kmeans<DIMENSIONS_COUNT> *get_kmeans(int rows_count, int clusters_count, options
         break;
     case options::kmeans_centroid_algorithm::gpu_median_sort:
         result = new gpu_kmedians_with_sort<DIMENSIONS_COUNT>(rows_count, clusters_count);
+        break;
+    case options::kmeans_centroid_algorithm::cpu_mean:
+        result = new cpu_kmeans<DIMENSIONS_COUNT>(rows_count, clusters_count);
+        break;
+    case options::kmeans_centroid_algorithm::cpu_median:
+        result = new cpu_kmedians<DIMENSIONS_COUNT>(rows_count, clusters_count);
         break;
     default:
         break;

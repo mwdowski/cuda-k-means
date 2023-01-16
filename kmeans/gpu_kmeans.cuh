@@ -101,8 +101,8 @@ private:
 
     bool is_finished()
     {
-        thrust::device_ptr<int> a(dev_changed_assignments);
-        return thrust::none_of(a, a + base::rows_count, thrust::identity<int>());
+        thrust::device_ptr<int> thrust_changed_assignments_ptr(dev_changed_assignments);
+        return thrust::none_of(thrust_changed_assignments_ptr, thrust_changed_assignments_ptr + base::rows_count, thrust::identity<int>());
     }
 
 protected:
