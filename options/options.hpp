@@ -4,7 +4,7 @@
 
 struct options
 {
-    enum kmeans_centroid_algorithm
+    enum class kmeans_centroid_algorithm
     {
         gpu_mean = 0,
         gpu_median_partition = 1,
@@ -17,7 +17,7 @@ struct options
     int dimension_count = 2;
     int iteration_limit = 20;
     bool visualize = false;
-    kmeans_centroid_algorithm centroid_algorithm = gpu_mean;
+    kmeans_centroid_algorithm centroid_algorithm = kmeans_centroid_algorithm::gpu_mean;
     std::string input_file_name = FILE_NAME_NOT_DECLARED;
     std::string output_file_name = FILE_NAME_NOT_DECLARED;
 

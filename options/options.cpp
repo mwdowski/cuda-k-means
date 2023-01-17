@@ -18,10 +18,12 @@ const std::string options::HELP_MESSAGE =
 " -o [file path]: Output file path.\n"
 " -l [integer]: Desired iteration limit. Must be non-negative. Default value is 20.\n"
 " -h: Display help.\n"
-" -a: Algorithm\n"
+" -a: Algorithm:\n"
 "    -a 0: k-means on GPU (default);\n"
 "    -a 1: k-medians with partition on GPU (default);\n"
-"    -a 2: k-medians with sorting on GPU (default);\n";
+"    -a 2: k-medians with sorting on GPU (default);\n"
+"    -a 3: k-means on CPU ;\n"
+"    -a 2: k-medians on CPU.\n";
 
 bool options::is_valid()
 {
