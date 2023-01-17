@@ -6,7 +6,7 @@
 #include "../macros/macros.hpp"
 #include "../data_visualizer/data_visualizer_2d.hpp"
 #include <vector>
-#include <boost/preprocessor.hpp>
+//#include <boost/preprocessor.hpp>
 #include "../macros/macros.hpp"
 #include "application_timer.hpp"
 #include <ctime>
@@ -120,7 +120,28 @@ void application::run(options &options)
 
     switch (options.dimension_count)
     {
-        BOOST_PP_REPEAT_FROM_TO(DIMENSION_BOTTOM_LIMIT, DIMENSION_TOP_LIMIT, CODE_DIMENSION_SWITCH_PASTE, _)
+        //BOOST_PP_REPEAT_FROM_TO(DIMENSION_BOTTOM_LIMIT, DIMENSION_TOP_LIMIT, CODE_DIMENSION_SWITCH_PASTE, _)
+    case 2:                                       
+        run_for_one_dimensions_count<2>(options);
+        break;
+    case 3:
+        run_for_one_dimensions_count<2>(options);
+        break;
+    case 4:
+        run_for_one_dimensions_count<2>(options);
+        break;
+    case 5:
+        run_for_one_dimensions_count<2>(options);
+        break;
+    case 6:
+        run_for_one_dimensions_count<2>(options);
+        break;
+    case 7:
+        run_for_one_dimensions_count<2>(options);
+        break;
+    case 8:
+        run_for_one_dimensions_count<2>(options);
+        break;
     default:
         fprintf_error_and_exit("Not supported number of dimensions.\n")
     }

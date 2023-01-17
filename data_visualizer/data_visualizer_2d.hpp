@@ -19,5 +19,5 @@ private:
 
 public:
     data_visualizer_2d(const std::vector<float> &x, const std::vector<float> &y, const std::vector<int> &color, const std::vector<float> &centroids, int cluster_count);
-    virtual void show_plot() override;
+    virtual void show_plot();
 };

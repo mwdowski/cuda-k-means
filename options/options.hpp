@@ -22,26 +22,13 @@ struct options
     std::string output_file_name = FILE_NAME_NOT_DECLARED;
 
 private:
-    inline static const int CLUSTER_COUNT_NOT_DECLARED = -1;
-    inline static const int GETOPT_FINISHED = -1;
-    inline static const int MIN_CLUSTER_COUNT = 2;
-    inline static const int MIN_DIMENSIONS_COUNT = 2;
-    inline static const int MAX_DIMENSIONS_COUNT = 9;
-    inline static const std::string FILE_NAME_NOT_DECLARED = "";
-    inline static const std::string HELP_MESSAGE =
-        "Required arguments:\n"
-        " -i [file path]: Input file path.\n"
-        " -k [integer]: Desired cluster count. Must be an integer equal or higher than 2.\n"
-        " -n [integer]: Data dimension (column) count. Must be an integer in range <2, 9>.\n"
-        "Optional arguments:\n"
-        " -v: Visualize results. Works only for 2 and 3-dimensional data.\n"
-        " -o [file path]: Output file path.\n"
-        " -l [integer]: Desired iteration limit. Must be non-negative. Default value is 20.\n"
-        " -h: Display help.\n"
-        " -a: Algorithm\n"
-        "    -a 0: k-means on GPU (default);\n"
-        "    -a 1: k-medians with partition on GPU (default);\n"
-        "    -a 2: k-medians with sorting on GPU (default);\n";
+    static const int CLUSTER_COUNT_NOT_DECLARED = -1;
+    static const int GETOPT_FINISHED = -1;
+    static const int MIN_CLUSTER_COUNT = 2;
+    static const int MIN_DIMENSIONS_COUNT = 2;
+    static const int MAX_DIMENSIONS_COUNT = 8;
+    static const std::string FILE_NAME_NOT_DECLARED;
+    static const std::string HELP_MESSAGE;
 
     options(){};
     bool is_valid();

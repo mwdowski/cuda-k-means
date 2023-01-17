@@ -1,8 +1,27 @@
 #include "options.hpp"
-#include <getopt.h>
-#include <unistd.h>
+// #include <getopt.h>
+// #include <unistd.h>
+#define __GNU_LIBRARY__
+#include "../getopt/getopt.h"
 #include <stdexcept>
 #include <cstdlib>
+
+
+const std::string options::FILE_NAME_NOT_DECLARED = "";
+const std::string options::HELP_MESSAGE =
+"Required arguments:\n"
+" -i [file path]: Input file path.\n"
+" -k [integer]: Desired cluster count. Must be an integer equal or higher than 2.\n"
+" -n [integer]: Data dimension (column) count. Must be an integer in range <2, 9>.\n"
+"Optional arguments:\n"
+" -v: Visualize results. Works only for 2 and 3-dimensional data.\n"
+" -o [file path]: Output file path.\n"
+" -l [integer]: Desired iteration limit. Must be non-negative. Default value is 20.\n"
+" -h: Display help.\n"
+" -a: Algorithm\n"
+"    -a 0: k-means on GPU (default);\n"
+"    -a 1: k-medians with partition on GPU (default);\n"
+"    -a 2: k-medians with sorting on GPU (default);\n";
 
 bool options::is_valid()
 {
@@ -15,7 +34,7 @@ options options::from_commandline_arguments(const int argc, char **argv)
     int current_option = 0;
     while (current_option != GETOPT_FINISHED)
     {
-        switch (current_option = getopt(argc, argv, ":i:o:a:k:n:l:hv"))
+        switch (current_option = getopt(argc, argv, "i:o:a:k:n:l:hv"))
         {
         case GETOPT_FINISHED:
             break;
@@ -97,11 +116,11 @@ options options::from_commandline_arguments(const int argc, char **argv)
             }
             break;
         case ':':
-            fprintf(stderr, "Missing argument for option \"%c\". Use option \"h\" for help.\n", optopt);
+            fprintf(stderr, "Missing argument for option \"%s\". Use option \"h\" for help.\n", optarg);
             exit(EXIT_FAILURE);
             break;
         default: /* ? */
-            fprintf(stderr, "Unrecognized option \"%c\". Use option \"h\" for help.\n", (char)optopt);
+            fprintf(stderr, "Unrecognized option \"%s\". Use option \"h\" for help.\n", optarg);
             exit(EXIT_FAILURE);
             break;
         }

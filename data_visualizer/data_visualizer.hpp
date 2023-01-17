@@ -5,8 +5,8 @@ class data_visualizer
 public:
     virtual void show_plot() = 0;
 
-protected:
-    inline static const unsigned int COLORS[] = {
+public:
+    const unsigned int COLORS[9] = {
         0xFF4900E6U,
         0xFFFFB40BU,
         0xFF91E950U,

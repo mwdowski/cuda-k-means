@@ -8,7 +8,7 @@ using namespace std::chrono;
 
 struct application_timer
 {
-    typedef _V2::system_clock::time_point moment;
+    typedef steady_clock::time_point moment;
     moment start;
     moment file_loading;
     moment copying_to_gpu;
