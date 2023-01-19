@@ -7,3 +7,4 @@ CMakeCache.txt
 CMakeFiles/
 build/
 out
+data/*.csv

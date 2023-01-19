@@ -1,29 +1,33 @@
 #include "options.hpp"
-// #include <getopt.h>
-// #include <unistd.h>
+
+#ifdef __WIN32__
 #define __GNU_LIBRARY__
 #include "../getopt/getopt.h"
+#else
+#include <getopt.h>
+#include <unistd.h>
+#endif
+
 #include <stdexcept>
 #include <cstdlib>
 
-
 const std::string options::FILE_NAME_NOT_DECLARED = "";
 const std::string options::HELP_MESSAGE =
-"Required arguments:\n"
-" -i [file path]: Input file path.\n"
-" -k [integer]: Desired cluster count. Must be an integer equal or higher than 2.\n"
-" -n [integer]: Data dimension (column) count. Must be an integer in range <2, 9>.\n"
-"Optional arguments:\n"
-" -v: Visualize results. Works only for 2 and 3-dimensional data.\n"
-" -o [file path]: Output file path.\n"
-" -l [integer]: Desired iteration limit. Must be non-negative. Default value is 20.\n"
-" -h: Display help.\n"
-" -a: Algorithm:\n"
-"    -a 0: k-means on GPU (default);\n"
-"    -a 1: k-medians with partition on GPU (default);\n"
-"    -a 2: k-medians with sorting on GPU (default);\n"
-"    -a 3: k-means on CPU ;\n"
-"    -a 2: k-medians on CPU.\n";
+    "Required arguments:\n"
+    " -i [file path]: Input file path.\n"
+    " -k [integer]: Desired cluster count. Must be an integer equal or higher than 2.\n"
+    " -n [integer]: Data dimension (column) count. Must be an integer in range <2, 9>.\n"
+    "Optional arguments:\n"
+    " -v: Visualize results. Works only for 2 and 3-dimensional data.\n"
+    " -o [file path]: Output file path.\n"
+    " -l [integer]: Desired iteration limit. Must be non-negative. Default value is 20.\n"
+    " -h: Display help.\n"
+    " -a: Algorithm:\n"
+    "    -a 0: k-means on GPU (default);\n"
+    "    -a 1: k-medians with partition on GPU (default);\n"
+    "    -a 2: k-medians with sorting on GPU (default);\n"
+    "    -a 3: k-means on CPU ;\n"
+    "    -a 4: k-medians on CPU.\n";
 
 bool options::is_valid()
 {
