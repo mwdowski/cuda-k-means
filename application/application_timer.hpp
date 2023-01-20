@@ -8,13 +8,18 @@ using namespace std::chrono;
 
 struct application_timer
 {
+#ifdef __WIN32__
     typedef steady_clock::time_point moment;
+#else
+    typedef system_clock::time_point moment;
+#endif
     moment start;
     moment file_loading;
     moment copying_to_gpu;
     moment computation;
     moment copying_from_gpu;
     moment file_saving;
+    moment data_visualization;
     moment end;
     int iterations;
 
@@ -35,6 +40,8 @@ public:
             << "ms - Copying from GPU time.\n";
         out << std::setw(8) << std::setprecision(3) << duration_cast<microseconds>(timer.file_saving - timer.copying_from_gpu).count() / 1000.0f
             << "ms - File saving time.\n";
+        out << std::setw(8) << std::setprecision(3) << duration_cast<microseconds>(timer.data_visualization - timer.file_saving).count() / 1000.0f
+            << "ms - Data visualization (printing centroids positions and displaying plot).\n";
         out << std::setw(8) << std::setprecision(3) << duration_cast<microseconds>(timer.end - timer.start).count() / 1000.0f
             << "ms - Summarized run time.\n";
 

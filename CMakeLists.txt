@@ -41,6 +41,12 @@ set_target_properties(data_visualizer_2d PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(data_visualizer_2d ${OPENGL_LIBRARIES} ${OPENGL_gl_LIBRARY} glfw macros)
 target_include_directories(data_visualizer_2d PUBLIC ${OPENGL_INCLUDE_DIRS})
 
+# data_visualizer_3d
+add_library(data_visualizer_3d data_visualizer/data_visualizer_3d.hpp data_visualizer/data_visualizer_3d.cpp)
+set_target_properties(data_visualizer_3d PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(data_visualizer_3d ${OPENGL_LIBRARIES} ${OPENGL_gl_LIBRARY} glfw macros)
+target_include_directories(data_visualizer_3d PUBLIC ${OPENGL_INCLUDE_DIRS})
+
 # options
 add_library(options options/options.hpp options/options.cpp)
 set_target_properties(options PROPERTIES LINKER_LANGUAGE CXX)
@@ -84,7 +90,7 @@ add_library(application application/application.cuh application/application.cu)
 target_include_directories(application PUBLIC ${CUDA_INCLUDE_DIRS} gpu_kmeans csv_reader macros application_timer cpu_kmeans)
 set_target_properties(application PROPERTIES LINKER_LANGUAGE CUDA)
 set_target_properties(application PROPERTIES CUDA_ARCHITECTURES ${DEFAULT_CUDA_ARCHITECTURE})
-target_link_libraries(application ${CUDA_RUNTIME_LIBRARY} data_visualizer_2d)
+target_link_libraries(application ${CUDA_RUNTIME_LIBRARY} data_visualizer_2d data_visualizer_3d)
 
 # main
 add_executable(main_gpu gpu/main.cu)

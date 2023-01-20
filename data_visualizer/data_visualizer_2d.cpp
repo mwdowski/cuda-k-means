@@ -23,19 +23,6 @@ void data_visualizer_2d::reshape(float x_min, float x_max, float y_min, float y_
     glMatrixMode(GL_MODELVIEW);
 }
 
-void DrawCircle(float cx, float cy, float r, int num_segments)
-{
-    glBegin(GL_LINE_LOOP);
-    for (int ii = 0; ii < num_segments; ii++)
-    {
-        float theta = 2.0f * 3.1415926f * float(ii) / float(num_segments); // get the current angle
-        float x = r * cosf(theta);                                         // calculate the x component
-        float y = r * sinf(theta);                                         // calculate the y component
-        glVertex2f(x + cx, y + cy);                                        // output vertex
-    }
-    glEnd();
-}
-
 void data_visualizer_2d::display(GLFWwindow *window)
 {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -67,7 +54,7 @@ void data_visualizer_2d::display(GLFWwindow *window)
     glColor4ubv(white);
     for (int i = 0; i < cluster_count; i++)
     {
-        DrawCircle(centroids[i * 2], centroids[i * 2 + 1], 0.1, 100);
+        data_visualizer::draw_circle(centroids[i * 2], centroids[i * 2 + 1], 0.1, 100);
     }
     glfwSwapBuffers(window);
 

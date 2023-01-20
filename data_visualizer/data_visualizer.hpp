@@ -1,9 +1,25 @@
 #pragma once
 
+#include <cmath>
+#include <GLFW/glfw3.h>
+
 class data_visualizer
 {
 public:
     virtual void show_plot() = 0;
+
+    inline static void draw_circle(float cx, float cy, float r, int num_segments)
+    {
+        glBegin(GL_LINE_LOOP);
+        for (int ii = 0; ii < num_segments; ii++)
+        {
+            float theta = 2.0f * 3.1415926f * float(ii) / float(num_segments); // get the current angle
+            float x = r * cosf(theta);                                         // calculate the x component
+            float y = r * sinf(theta);                                         // calculate the y component
+            glVertex2f(x + cx, y + cy);                                        // output vertex
+        }
+        glEnd();
+    }
 
 public:
     const unsigned int COLORS[18] = {

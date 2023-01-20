@@ -5,6 +5,7 @@
 #include "../csv_reader/csv_columnwise_data.hpp"
 #include "../macros/macros.hpp"
 #include "../data_visualizer/data_visualizer_2d.hpp"
+#include "../data_visualizer/data_visualizer_3d.hpp"
 #include <vector>
 #include "../macros/macros.hpp"
 #include "application_timer.hpp"
@@ -53,6 +54,8 @@ void application::run_for_one_dimensions_count(options &options)
     application_timer timer;
     timer.start = std::chrono::high_resolution_clock::now();
 
+    srand(options.random_seed);
+
     csv_columnwise_data<DIMENSIONS_COUNT> data = csv_reader<DIMENSIONS_COUNT>::from_file(options.input_file_name.c_str());
     if (!data.is_correct())
     {
@@ -77,6 +80,10 @@ void application::run_for_one_dimensions_count(options &options)
     colors.assign(colors_p, colors_p + data.size());
     colors_p = nullptr;
 
+    std::vector<float> clusters;
+    clusters.assign(centroids_p, centroids_p + options.cluster_count * DIMENSIONS_COUNT);
+    centroids_p = nullptr;
+
     timer.copying_from_gpu = std::chrono::high_resolution_clock::now();
 
     if (options.output_file_name.length() > 0)
@@ -88,24 +95,46 @@ void application::run_for_one_dimensions_count(options &options)
     if (options.visualize)
     {
 
-        std::vector<float> clusters;
-        clusters.assign(centroids_p, centroids_p + options.cluster_count * DIMENSIONS_COUNT);
-        centroids_p = nullptr;
-
         if (DIMENSIONS_COUNT == 2)
         {
             data_visualizer_2d visualizer(data.data[0], data.data[1], colors, clusters, options.cluster_count);
             visualizer.show_plot();
         }
-        /*
         else if (DIMENSIONS_COUNT == 3)
         {
-            data_visualizer_3d visualizer(data.data[0], data.data[1], data.data[2], vector<float>());
+            data_visualizer_3d visualizer(data.data[0], data.data[1], data.data[2], colors, options.cluster_count);
             visualizer.show_plot();
         }
-        */
+        else
+        {
+            options.print_centroids = true;
+        }
     }
 
+    if (options.print_centroids)
+    {
+        std::cout << "Printing centroid centers:\n\n";
+        std::cout << "   ";
+        for (int j = 0; j < options.dimension_count; j++)
+        {
+            std::cout << std::setw(10) << "dim" << j;
+        }
+        std::cout << "\n";
+
+        for (int i = 1; i <= options.cluster_count; i++)
+        {
+            std::cout << std::setw(2) << i << ". ";
+            for (int j = 0; j < options.dimension_count; j++)
+            {
+                std::cout << std::setw(10) << std::fixed << std::setprecision(6) << clusters[(i - 1) * options.dimension_count + j] << " ";
+            }
+            std::cout << "\n";
+        }
+
+        std::cout << "\n";
+    }
+
+    timer.data_visualization = std::chrono::high_resolution_clock::now();
     timer.end = std::chrono::high_resolution_clock::now();
     std::cout << timer;
 }

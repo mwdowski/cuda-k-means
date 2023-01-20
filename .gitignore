@@ -8,3 +8,4 @@ CMakeFiles/
 build/
 out
 data/*.csv
+output

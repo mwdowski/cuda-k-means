@@ -19,4 +19,4 @@ y_res <- c(y_res, (y + 6) * 1.2)
 
 res <- cbind.data.frame(x_res, y_res)
 
-write.table(sample(res), file = "four_2d_blobs.csv", row.names = FALSE, col.names = FALSE)
+write.table(res[sample(1:nrow(res)), ], file = "three_2d_blobs.csv", row.names = FALSE, col.names = FALSE)

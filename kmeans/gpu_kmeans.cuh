@@ -80,9 +80,10 @@ private:
 
         for (int i = 0; i < base::clusters_count; i++)
         {
+            int r = rand() % base::rows_count;
             for (int j = 0; j < DIMENSION_COUNT; j++)
             {
-                pos[j + DIMENSION_COUNT * i] = data.data[j][i];
+                pos[j + DIMENSION_COUNT * i] = data.data[j][r];
             }
         }
 

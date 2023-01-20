@@ -71,4 +71,4 @@ res <- cbind.data.frame(x_res, y_res)
 
 # plot(x_res, y_res)
 
-write.table(sample(res), file = "thirteen_2d_blobs.csv", row.names = FALSE, col.names = FALSE)
+write.table(res[sample(1:nrow(res)), ], file = "thirteen_2d_blobs.csv", row.names = FALSE, col.names = FALSE)
