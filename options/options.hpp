@@ -11,10 +11,12 @@ struct options
         gpu_median_sort = 2,
         cpu_mean = 3,
         cpu_median = 4,
+        min = gpu_mean,
+        max = cpu_median
     };
 
     int cluster_count = CLUSTER_COUNT_NOT_DECLARED;
-    int dimension_count = 2;
+    int dimension_count = CLUSTER_COUNT_NOT_DECLARED;
     unsigned int random_seed = time(nullptr);
     int iteration_limit = 40;
     bool visualize = false;
@@ -23,7 +25,7 @@ struct options
     std::string input_file_name = FILE_NAME_NOT_DECLARED;
     std::string output_file_name = FILE_NAME_NOT_DECLARED;
 
-private:
+public:
     static const int CLUSTER_COUNT_NOT_DECLARED = -1;
     static const int GETOPT_FINISHED = -1;
     static const int MIN_CLUSTER_COUNT = 2;

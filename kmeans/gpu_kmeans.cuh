@@ -74,20 +74,20 @@ private:
         return cudaDeviceSynchronize();
     }
 
-    cudaError_t set_first_points_as_centroids(const csv_columnwise_data<DIMENSION_COUNT> &data)
+    cudaError_t set_initial_points_as_centroids(const csv_columnwise_data<DIMENSION_COUNT> &data)
     {
-        std::vector<float> pos(DIMENSION_COUNT * base::clusters_count);
+        std::vector<float> initial_centroids(DIMENSION_COUNT * base::clusters_count);
 
         for (int i = 0; i < base::clusters_count; i++)
         {
             int r = rand() % base::rows_count;
             for (int j = 0; j < DIMENSION_COUNT; j++)
             {
-                pos[j + DIMENSION_COUNT * i] = data.data[j][r];
+                initial_centroids[j + DIMENSION_COUNT * i] = data.data[j][r];
             }
         }
 
-        cuda_try_or_return(cudaMemcpyToSymbol(kernels::centroids, pos.data(), sizeof(float) * DIMENSION_COUNT * base::clusters_count));
+        cuda_try_or_return(cudaMemcpyToSymbol(kernels::centroids, initial_centroids.data(), sizeof(float) * DIMENSION_COUNT * base::clusters_count));
 
         return cudaDeviceSynchronize();
     }
@@ -200,7 +200,7 @@ public:
             cuda_try_or_return(cudaMemcpy(dev_points_data[i], data.data[i].data(), base::rows_count * sizeof(float), cudaMemcpyHostToDevice));
         }
 
-        cuda_try_or_return(set_first_points_as_centroids(data));
+        cuda_try_or_return(set_initial_points_as_centroids(data));
 
         return cudaDeviceSynchronize();
     }

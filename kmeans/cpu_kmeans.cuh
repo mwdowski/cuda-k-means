@@ -68,7 +68,7 @@ private:
         return cudaSuccess;
     }
 
-    cudaError_t set_first_points_as_centroids(const csv_columnwise_data<DIMENSION_COUNT> &data)
+    cudaError_t set_initial_points_as_centroids(const csv_columnwise_data<DIMENSION_COUNT> &data)
     {
         for (int i = 0; i < base::clusters_count; i++)
         {
@@ -190,7 +190,7 @@ public:
             memcpy(host_points_data[i], data.data[i].data(), base::rows_count * sizeof(float));
         }
 
-        cuda_try_or_return(set_first_points_as_centroids(data));
+        cuda_try_or_return(set_initial_points_as_centroids(data));
 
         return cudaDeviceSynchronize();
     }

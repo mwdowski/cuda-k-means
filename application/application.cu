@@ -12,13 +12,6 @@
 #include <ctime>
 #include <chrono>
 
-#ifndef DIMENSION_TOP_LIMIT
-#define DIMENSION_TOP_LIMIT 3
-#endif
-#ifndef DIMENSION_BOTTOM_LIMIT
-#define DIMENSION_BOTTOM_LIMIT 2
-#endif
-
 template <int DIMENSIONS_COUNT>
 kmeans<DIMENSIONS_COUNT> *get_kmeans(int rows_count, int clusters_count, options::kmeans_centroid_algorithm alg)
 {

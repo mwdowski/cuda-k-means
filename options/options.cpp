@@ -33,7 +33,7 @@ const std::string options::HELP_MESSAGE =
 
 bool options::is_valid()
 {
-    return this->input_file_name.length() > 0 && this->cluster_count != CLUSTER_COUNT_NOT_DECLARED;
+    return this->input_file_name.length() > 0 && this->cluster_count != CLUSTER_COUNT_NOT_DECLARED && this->dimension_count != CLUSTER_COUNT_NOT_DECLARED;
 }
 
 options options::from_commandline_arguments(const int argc, char **argv)
@@ -125,7 +125,7 @@ options options::from_commandline_arguments(const int argc, char **argv)
             try
             {
                 int value = std::stoi(std::string(optarg));
-                if (value < 0 || value > 4)
+                if (value < (int)kmeans_centroid_algorithm::min || value > (int)kmeans_centroid_algorithm::max)
                 {
                     throw nullptr;
                 }
@@ -150,7 +150,7 @@ options options::from_commandline_arguments(const int argc, char **argv)
 
     if (!result.is_valid())
     {
-        fprintf(stderr, "Specify correct input file and specify cluster number. Use option \"h\" for help.\n");
+        fprintf(stderr, "Specify correct input file, cluster count and dimension count. Use option \"h\" for help.\n");
         exit(EXIT_FAILURE);
     }
 
