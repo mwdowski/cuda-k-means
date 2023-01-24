@@ -1,6 +1,6 @@
 #include "options.hpp"
 
-#ifdef __WIN32__
+#ifdef WIN32
 #define __GNU_LIBRARY__
 #include "../getopt/getopt.h"
 #else

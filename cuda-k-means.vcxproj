@@ -17,6 +17,7 @@
     <ClInclude Include="csv_reader\csv_reader.hpp" />
     <ClInclude Include="data_visualizer\data_visualizer.hpp" />
     <ClInclude Include="data_visualizer\data_visualizer_2d.hpp" />
+    <ClInclude Include="data_visualizer\data_visualizer_3d.hpp" />
     <ClInclude Include="getopt\getopt.h" />
     <ClInclude Include="glfw_local\include\GLFW\glfw3.h" />
     <ClInclude Include="glfw_local\include\GLFW\glfw3native.h" />
@@ -42,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="data_visualizer\data_visualizer_2d.cpp" />
+    <ClCompile Include="data_visualizer\data_visualizer_3d.cpp" />
     <ClCompile Include="getopt\getopt.c" />
     <ClCompile Include="options\options.cpp" />
   </ItemGroup>

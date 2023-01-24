@@ -8,7 +8,7 @@ using namespace std::chrono;
 
 struct application_timer
 {
-#ifdef __WIN32__
+#ifdef WIN32
     typedef steady_clock::time_point moment;
 #else
     typedef system_clock::time_point moment;
