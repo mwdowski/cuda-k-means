@@ -47,6 +47,8 @@ void application::run_for_one_dimensions_count(options &options)
     application_timer timer;
     timer.start = std::chrono::high_resolution_clock::now();
 
+    cuda_try_or_exit(cudaSetDevice(0));
+
     srand(options.random_seed);
 
     csv_columnwise_data<DIMENSIONS_COUNT> data = csv_reader<DIMENSIONS_COUNT>::from_file(options.input_file_name.c_str());
